@@ -30,24 +30,6 @@ testo grezzo in lingua italiana.
 - Testato su un corpus giocattolo scritto a mano e su un sottoinsieme di Wikipedia
   italiana (tramite la libreria `datasets` di HuggingFace)
 
-## Roadmap dei prossimi miglioramenti
-
-1. Subsampling delle parole ad alta frequenza durante la generazione delle coppie
-2. Negative sampling, per rendere il training scalabile a vocabolari più grandi
-3. Task di analogia vettoriale (es. "re" - "uomo" + "donna" ≈ "regina")
-4. Visualizzazione 2D degli embedding (PCA / t-SNE)
-5. Salvataggio e caricamento dei pesi allenati
-
-## Utilizzo
-
-Il codice è attualmente organizzato come notebook Jupyter. Le sezioni principali:
-
-1. **Preprocessing**: `tokenize_text`, `build_vocab`, `encode`, `decode`
-2. **Generazione dei dati di training**: `generate_training_pairs`
-3. **Modello**: classi `Layer`, `EmbeddingLayer`, `DenseLayer`, `SoftMaxCrossEntropy`
-4. **Training**: ciclo mini-batch con SGD, split train/test con shuffle preventivo
-5. **Valutazione**: `most_similar_global`, `evaluate_topk_accuracy`
-
 ## Dataset
 
 Il modello è stato testato su:

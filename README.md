@@ -1,6 +1,6 @@
 # Word2Vec from Scratch — Skip-gram in NumPy
 
-Implementazione da zero (solo NumPy, nessun framework di deep learning) di un modello
+Implementazione da zero di un modello
 Word2Vec in variante Skip-gram, per l'apprendimento di word embedding a partire da
 testo grezzo in lingua italiana.
 

@@ -1,0 +1,20 @@
+# Dati e output generati (rigenerabili, non vanno versionati)
+corpus_wikipedia.txt
+embeddings_output/
+*.npy
+
+# Ambiente Python
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+*.egg-info/
+
+# Ambienti virtuali
+venv/
+.venv/
+env/
+
+# File di sistema / editor
+.DS_Store
+.vscode/
+.idea/

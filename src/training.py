@@ -43,7 +43,8 @@ def prepare_training_data(corpus, window_size=3, test_split=0.1, seed=None):
     """
     word2idx, idx2word, word_freq = build_vocab(corpus)
     corpus_indices = encode(corpus, word2idx)
-    pairs = generate_training_pairs(corpus_indices, window_size=window_size)
+    word_probs = { key : value / len(corpus_indices) for key, value in word_freq.items() }
+    pairs = generate_training_pairs(corpus_indices, idx2word, word_probs, 3)
 
     pairs_arr = np.array(pairs)
     targets = pairs_arr[:, 0]

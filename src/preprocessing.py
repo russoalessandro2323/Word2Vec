@@ -75,30 +75,50 @@ def decode(corpus_indexes, idx2word):
     return [idx2word[idx] for idx in corpus_indexes]
 
 
-def generate_training_pairs(corpus_indices, window_size=3):
-    """Per ogni parola nel corpus, genera coppie (target, context)
-    scorrendo una finestra di +-window_size. <NWL> agisce da muro
-    simmetrico: il contesto non attraversa mai un confine di frase.
+def generate_training_pairs(corpus_indexes, idx2word, word_probs, window_size=3):
+    # Per ogni parola nel corpus, genera coppie (target, context)
+    # scorrendo una finestra di ±window_size
 
-    Ritorna: lista di coppie [target_idx, context_idx]
-    """
+    # Output atteso: lista di coppie (target_idx, context_idx)
+    # Attenzione ai bordi delle frasi/testo (non puoi prendere contesto "fuori" dal testo)
+
+    filtered_indexes = subsampling(corpus_indexes, idx2word, word_probs)
+    last_idx = len(filtered_indexes) - 1
     out = []
-    last_idx = len(corpus_indices) - 1
 
-    for pos, idx in enumerate(corpus_indices):
-        if idx == 0:  # non generiamo coppie con <NWL> come target
-            continue
+    for pos, idx in enumerate(filtered_indexes):
 
-        for j in range(1, window_size + 1):  # sinistra
+      if idx != 0:
+        for j in range(1, window_size + 1): # sx
             if (pos - j) >= 0:
-                out.append([idx, corpus_indices[pos - j]])
-                if corpus_indices[pos - j] == 0:
-                    break
+              out.append([idx, filtered_indexes[pos - j]])
+              if filtered_indexes[pos - j] == 0: # if context == '<NWL>' break the cicle for that word
+                break
 
-        for j in range(1, window_size + 1):  # destra
-            if (pos + j) <= last_idx:
-                out.append([idx, corpus_indices[pos + j]])
-                if corpus_indices[pos + j] == 0:
-                    break
+        for j in range(1, window_size + 1): # dx
+          if (pos + j) <= last_idx:
+            out.append([idx, filtered_indexes[pos + j]])
+
+            if filtered_indexes[pos + j] == 0: # if context == '<NWL>' break the cicle for that word
+              break
 
     return out
+
+def subsampling(corpus_indexes, idx2word, word_probs, t=1e-3):
+  keep_probs = {}
+  for idx, word in idx2word.items():
+      if idx == 0:  # <NWL> mantenuto sempre
+          keep_probs[idx] = 1.0
+          continue
+
+      f = word_probs.get(word, 1e-6)
+      keep_probs[idx] = np.sqrt(t / f) if f > t else 1.0
+
+  filtered_indices = []
+  for idx in corpus_indexes:
+      if idx == 0:
+          filtered_indices.append(idx)
+      elif np.random.rand() < keep_probs.get(idx, 1.0):
+          filtered_indices.append(idx)
+
+  return filtered_indices
